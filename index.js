@@ -1,9 +1,5 @@
-const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
 const math = require('mathjs');
-
-const app = express();
 
 const ConvertDateTotring = require('./Logic/ConvertDateTotring');
 const cdnutsModel = require('./models/cdnuts');
@@ -13,9 +9,6 @@ const instantsModel = require('./models/instants');
 const variableModel = require('./models/variables');
 const variablevaluesModel = require('./models/variablevalues');
 const variablevaluescachesModel = require('./models/variablevaluescaches');
-
-app.use(cors());
-app.use(express.json({ limit: '10mb' }));
 
 mongoose.connect("mongodb+srv://sureshtest:test123@testcluster.xymejdg.mongodb.net/esdata");
 
@@ -319,8 +312,4 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
             }
         }
     }
-})
-
-app.listen(4002, () => {
-    console.log("Server running on port 4002");
 })
