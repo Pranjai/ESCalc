@@ -12,6 +12,8 @@
     "cors": "^2.8.5",
     "express": "^4.21.1",
     "mathjs": "^13.2.0",
-    "mongoose": "^8.7.2"
+    "mongoose": "^8.7.2",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
   }
 }

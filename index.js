@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const logger = require('./Logic/logger.js');
 const math = require('mathjs');
 
 const ConvertDateTotring = require('./Logic/ConvertDateTotring');
@@ -70,9 +71,9 @@ const astToPipeline = (node, doc, variableValueslist, dcsgblock, blockNo) => {
 const formulaToPipeline = (formula, doc, variableValueslist, dcsgblock, blockNo) => {
     const modifiedFormula = formula.replace(/(?<=[a-zA-Z]) (?=[a-zA-Z])/g, 'underscore');
     const ast = math.parse(modifiedFormula);
-    console.log(JSON.stringify(ast));
+    logger.info(JSON.stringify(ast));
     const pipeline = astToPipeline(ast, doc, variableValueslist, dcsgblock, blockNo);
-    console.log(JSON.stringify(pipeline));
+    logger.info(JSON.stringify(pipeline));
     return pipeline;
   }
 
@@ -104,23 +105,23 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
             console.log("After adding 5:30 hours istDateTime: " + JSON.stringify(today));
         }*/
         today.setHours(0, 0, 0, 0);
-        console.log("After resetting it to 0 hours today:" + JSON.stringify(today));
+        logger.info("After resetting it to 0 hours today:" + JSON.stringify(today));
         //let tommorow = new Date()
         let tommorow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
         tommorow.setDate(today.getDate() + 1)
-        console.log("tommorow.getTimezoneOffset() - " + tommorow.getTimezoneOffset())
+        logger.info("tommorow.getTimezoneOffset() - " + tommorow.getTimezoneOffset())
         tommorow.setHours(0, 0, 0, 0);
-        console.log("After resetting it to 0 hours tommorow:" + JSON.stringify(tommorow));
-        console.log("deviceid:" + deviceId);
+        logger.info("After resetting it to 0 hours tommorow:" + JSON.stringify(tommorow));
+        logger.info("deviceid:" + deviceId);
         let blockNo;
         blockNo = ConvertDateTotring.ConvertToBlock(istDateTime);
-        console.log("blockNo: " + blockNo);
+        logger.info("blockNo: " + blockNo);
         dcsgDataForToday = await dcsgModel.find({ deviceid: deviceId, date: { $gte: today, $lt: tommorow } }).sort({ revisionno: -1 }).limit(1)
         for await (const dcsgdocument of dcsgDataForToday) {
             dcsgDataResponse = dcsgdocument;
         }
         if (dcsgDataResponse == null) {
-            console.log("record not Found. So, taking the last dcsg record.");
+            logger.info("record not Found. So, taking the last dcsg record.");
             dcsgDataForToday = await dcsgModel.find({ deviceid: deviceId }).sort({ date: -1, revisionno: -1 }).limit(1)
             for await (const dcsgdocument of dcsgDataForToday) {
                 dcsgDataResponse = dcsgdocument;
@@ -137,16 +138,16 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
             //let dayafterTommorow = new Date()
             let dayafterTommorow =new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
             dayafterTommorow.setDate(tommorow.getDate() + 1)
-            console.log("dayAfterTommorow.getTimezoneOffset() - " + dayafterTommorow.getTimezoneOffset())
+            logger.info("dayAfterTommorow.getTimezoneOffset() - " + dayafterTommorow.getTimezoneOffset())
             dayafterTommorow.setHours(0, 0, 0, 0);
-            console.log("After resetting it to 0 hours day after tommorow:" + JSON.stringify(dayafterTommorow));
+            logger.info("After resetting it to 0 hours day after tommorow:" + JSON.stringify(dayafterTommorow));
 
             const dcsgDataForTomorrow = await dcsgModel.find({ deviceid: deviceId, date: { $gte: tommorow, $lt: dayafterTommorow } }).sort({ revisionno: -1 }).limit(1)
             for await (const dcsgdocument of dcsgDataForTomorrow) {
                 dcsgDataResponse = dcsgdocument;
             }
             if (dcsgDataResponse == null) {
-                console.log("record not Found. So, taking the first blocks of last dcsg record.");
+                logger.info("record not Found. So, taking the first blocks of last dcsg record.");
                 dcsgDataForTomorrow = await dcsgModel.find({ deviceid: deviceId }).sort({ date: -1, revisionno: -1 }).limit(1)
                 for await (const dcsgdocument of dcsgDataForTomorrow) {
                     dcsgDataResponse = dcsgdocument;
@@ -160,7 +161,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                 }
             }
         }
-        console.log("dcsgblock: " + JSON.stringify(dcsgblock));
+        logger.info("dcsgblock: " + JSON.stringify(dcsgblock));
         //#endregion
         const variables = await variableModel.find({ deviceid: deviceId });
         const variableValueslist = [];
@@ -187,18 +188,18 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                         ])
                         result = result[0].value;
                     }
-                    console.log("Unsacled value: " + result);
+                    logger.info("Unsacled value: " + result);
                     if(variable.scale !== undefined && variable.scale!== null) {
                         const scale = math.evaluate(variable.scale);
                         result = result*scale;
                     }
-                    console.log("Scaled value: " + result);
+                    logger.info("Scaled value: " + result);
 
                     // let avg_val = -1;
                     // console.log("avg_val: " + avg_val);
                     if (variable.calcavg) {
-                        console.log("device : " + deviceId);
-                        console.log("devicename : " + devicename);
+                        logger.info("device : " + deviceId);
+                        logger.info("devicename : " + devicename);
                         const variableValuedoc = {
                             timestamp: istDateTime,
                             deviceid: deviceId,
@@ -208,7 +209,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                             value: result
                         };
                         const variableValuesCachesResult = await variablevaluescachesModel.create(variableValuedoc);
-                        console.log("response variableValuesCacheResult: " + JSON.stringify(variableValuesCachesResult));
+                        logger.info("response variableValuesCacheResult: " + JSON.stringify(variableValuesCachesResult));
                         let current_Date = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
                         /*let current_Date = new Date();
                         current_Date.setDate(date.getDate());
@@ -219,27 +220,27 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                             console.log("After adding 5:30 hours current_Date: " + JSON.stringify(current_Date));
                         }*/
                         current_Date.setHours(0, 0, 0, 0);
-                        console.log("current_Date: " + JSON.stringify(current_Date));
+                        logger.info("current_Date: " + JSON.stringify(current_Date));
                         let mins = 15 * (blockNo - 1);
-                        console.log("mins: " + mins);
+                        logger.info("mins: " + mins);
                         current_Date.setMinutes(current_Date.getMinutes() + mins);
-                        console.log("After adding mins - current_Date: " + JSON.stringify(current_Date));
+                        logger.info("After adding mins - current_Date: " + JSON.stringify(current_Date));
 
                         const variablevaluesAvgCollection = await variablevaluescachesModel.aggregate([
                             { $match: { variableid: variable._id, timestamp: { $gte: current_Date, $lte: istDateTime } } },
                             { $group: { _id: "$variableid", avg_val: { $avg: "$value" } } },
                             { $project: { "avg_val": 1 } }
                         ]);
-                        console.log("variablevaluesAvgCollection: " + JSON.stringify(variablevaluesAvgCollection));
+                        logger.info("variablevaluesAvgCollection: " + JSON.stringify(variablevaluesAvgCollection));
                         for await (const variableavg of variablevaluesAvgCollection) {
-                            console.log("variablevaluesAvgCollection - response: " + JSON.stringify(variableavg));
+                            logger.info("variablevaluesAvgCollection - response: " + JSON.stringify(variableavg));
                             result = variableavg.avg_val;
-                            console.log("avg_val: " + result);
+                            logger.info("avg_val: " + result);
                         }
                     }
                     variableValueslist.push({name: "variable_" + variable.variablename, value: result});
                     let todayDate = istDateTime.toISOString().split("T")[0];
-                    console.log("todayDate: " + todayDate);
+                    logger.info("todayDate: " + todayDate);
                     const variableValuedocument = {
                         timestamp: istDateTime,
                         date: todayDate,
@@ -250,30 +251,30 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                         blockno: blockNo,
                         value: result,
                     };
-                    console.log("inserting into variablevaluesModel: " + JSON.stringify(variableValuedocument));
+                    logger.info("inserting into variablevaluesModel: " + JSON.stringify(variableValuedocument));
                     const variableValuesResult = await variablevaluesModel.create(variableValuedocument);
                     try {
-                        console.log("updating into cdnutsModel: ");
+                        logger.info("updating into cdnutsModel: ");
                         let newItem = {
                             VariableId: variable._id,
                             VariableName: variable.variablename,
                             Value: result
                         }
-                        console.log("VariableId: " + variable._id);
+                        logger.info("VariableId: " + variable._id);
                         const terminal = await cdnutsModel.findOne({ TerminalId: deviceId });
                         if (terminal) {
                             // Check if the terminal exists
-                            console.log("terminal Object: " + JSON.stringify(terminal));
-                            console.log("Data Object: " + JSON.stringify(terminal.Data));
+                            logger.info("terminal Object: " + JSON.stringify(terminal));
+                            logger.info("Data Object: " + JSON.stringify(terminal.Data));
                             const itemIndex = terminal.Data.findIndex((item)  => item.VariableName === newItem.VariableName);
-                            console.log("itemIndex: " + itemIndex + " For VariableId:" +newItem.VariableName);
+                            logger.info("itemIndex: " + itemIndex + " For VariableId:" +newItem.VariableName);
                             terminal.TimestampId = istDateTime;
                             if (itemIndex > -1) {
-                                console.log("Update the existing item: " + JSON.stringify(newItem));
+                                logger.info("Update the existing item: " + JSON.stringify(newItem));
                                 // Update the existing item
                                 terminal.Data[itemIndex] = newItem;
                             } else {
-                                console.log("adding item to the existing item: " + JSON.stringify(newItem));
+                                logger.info("adding item to the existing item: " + JSON.stringify(newItem));
                                 // Add the new item
                                 terminal.Data.push(newItem);
                             }
@@ -311,7 +312,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                             await hdterminalObj.save();
                         }
                     } catch (error) {
-                        console.log(error)
+                        logger.error(error)
                     }
                 }
             }
