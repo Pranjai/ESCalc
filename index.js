@@ -96,6 +96,8 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
             console.log("After adding 5:30 hours today: " + JSON.stringify(today));
         }*/
         let istDateTime = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+        logger.info("istDateTime:" + JSON.stringify(istDateTime));
+        logger.info("device date:" + JSON.stringify(date));
         /*let istDateTime = new Date();
         istDateTime.setDate(date.getDate());
         console.log("istDateTime.getTimezoneOffset() - " + istDateTime.getTimezoneOffset())
