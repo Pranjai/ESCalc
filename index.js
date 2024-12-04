@@ -85,27 +85,28 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
         let dcsgblock = null;
         let dcsgDataForToday = null;
         let dcsgDataResponse = null;
-        const timestamp = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-        console.log("timestamp - " + JSON.stringify(timestamp));
-        let today = new Date();
+        let today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+        /*let today = new Date();
         today.setDate(date.getDate());
         console.log("today.getTimezoneOffset() - " + today.getTimezoneOffset())
         if (today.getTimezoneOffset() == -330 || today.getTimezoneOffset() == 0) {
             today.setHours(today.getHours() + 5);
             today.setMinutes(today.getMinutes() + 30);
             console.log("After adding 5:30 hours today: " + JSON.stringify(today));
-        }
-        let istDateTime = new Date();
+        }*/
+        let istDateTime = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+        /*let istDateTime = new Date();
         istDateTime.setDate(date.getDate());
         console.log("istDateTime.getTimezoneOffset() - " + istDateTime.getTimezoneOffset())
         if (istDateTime.getTimezoneOffset() == -330 || istDateTime.getTimezoneOffset() == 0) {
             istDateTime.setHours(istDateTime.getHours() + 5);
             istDateTime.setMinutes(istDateTime.getMinutes() + 30);
             console.log("After adding 5:30 hours istDateTime: " + JSON.stringify(today));
-        }
+        }*/
         today.setHours(0, 0, 0, 0);
         console.log("After resetting it to 0 hours today:" + JSON.stringify(today));
-        let tommorow = new Date()
+        //let tommorow = new Date()
+        let tommorow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
         tommorow.setDate(today.getDate() + 1)
         console.log("tommorow.getTimezoneOffset() - " + tommorow.getTimezoneOffset())
         tommorow.setHours(0, 0, 0, 0);
@@ -133,7 +134,8 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
             }
         }
         if(dcsgblock.length < 5) {
-            let dayafterTommorow = new Date()
+            //let dayafterTommorow = new Date()
+            let dayafterTommorow =new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
             dayafterTommorow.setDate(tommorow.getDate() + 1)
             console.log("dayAfterTommorow.getTimezoneOffset() - " + dayafterTommorow.getTimezoneOffset())
             dayafterTommorow.setHours(0, 0, 0, 0);
