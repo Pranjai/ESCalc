@@ -85,6 +85,8 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
         let dcsgblock = null;
         let dcsgDataForToday = null;
         let dcsgDataResponse = null;
+        const timestamp = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+        console.log("timestamp - " + JSON.stringify(timestamp));
         let today = new Date();
         today.setDate(date.getDate());
         console.log("today.getTimezoneOffset() - " + today.getTimezoneOffset())
