@@ -116,7 +116,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
         //logger.info("After resetting it to 0 hours tommorow:" + JSON.stringify(tommorow));
         //logger.info("deviceid:" + deviceId);
         let blockNo;
-        blockNo = ConvertDateTotring.ConvertToBlock(date);
+        blockNo = ConvertDateTotring.ConvertToBlock(istDateTime);
         //logger.info("blockNo: " + blockNo);
         dcsgDataForToday = await dcsgModel.find({ deviceid: deviceId, date: { $gte: today, $lt: tommorow } }).sort({ revisionno: -1 }).limit(1)
         for await (const dcsgdocument of dcsgDataForToday) {
@@ -203,7 +203,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                         //logger.info("device : " + deviceId);
                         //logger.info("devicename : " + devicename);
                         const variableValuedoc = {
-                            timestamp: date,
+                            timestamp: istDateTime,
                             deviceid: deviceId,
                             devicename: devicename,
                             blockno: blockNo,
@@ -229,7 +229,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                         //logger.info("After adding mins - current_Date: " + JSON.stringify(current_Date));
 
                         const variablevaluesAvgCollection = await variablevaluescachesModel.aggregate([
-                            { $match: { variableid: variable._id, timestamp: { $gte: current_Date, $lte: date } } },
+                            { $match: { variableid: variable._id, timestamp: { $gte: current_Date, $lte: istDateTime } } },
                             { $group: { _id: "$variableid", avg_val: { $avg: "$value" } } },
                             { $project: { "avg_val": 1 } }
                         ]);
@@ -244,7 +244,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                     let todayDate = today.toISOString().split("T")[0];
                     //logger.info("todayDate: " + todayDate);
                     const variableValuedocument = {
-                        timestamp: date,
+                        timestamp: istDateTime,
                         date: todayDate,
                         deviceid: deviceId,
                         devicename: devicename,
@@ -271,7 +271,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                             const itemIndex = terminal.Data.findIndex((item)  => item.VariableName === newItem.VariableName);
                             //logger.info("itemIndex: " + itemIndex + " For VariableId:" +newItem.VariableName);
                             //logger.info("Before terminal.TimestampId: " + terminal.TimestampId);
-                            terminal.TimestampId = date;
+                            terminal.TimestampId = istDateTime;
                             //logger.info("After terminal.TimestampId: " + terminal.TimestampId);
                             if (itemIndex > -1) {
                                 l//ogger.info("Update the existing item: " + JSON.stringify(newItem));
@@ -288,7 +288,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                             // If the terminal doesn't exist, create a new document
                             const terminalObj = new cdnutsModel({
                                 TerminalId: deviceId,
-                                TimestampId: date,
+                                TimestampId: istDateTime,
                                 TerminalName: devicename,
                                 Data: [newItem]
                             });
@@ -297,7 +297,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                         }
 
 
-                        const hdterminal = await hdnutsModel.findOne({ TerminalId: deviceId, TimestampId: date});
+                        const hdterminal = await hdnutsModel.findOne({ TerminalId: deviceId, TimestampId: istDateTime});
                         if (hdterminal) {
                          
                                 // Add the new item
@@ -308,7 +308,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                             // If the hdterminal doesn't exist, create a new document
                             const hdterminalObj = new hdnutsModel({
                                 TerminalId: deviceId,
-                                TimestampId: date,
+                                TimestampId: istDateTime,
                                 TerminalName: devicename,
                                 Data: [newItem]
                             });
