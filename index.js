@@ -269,7 +269,9 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                             logger.info("Data Object: " + JSON.stringify(terminal.Data));
                             const itemIndex = terminal.Data.findIndex((item)  => item.VariableName === newItem.VariableName);
                             logger.info("itemIndex: " + itemIndex + " For VariableId:" +newItem.VariableName);
+                            logger.info("Before terminal.TimestampId: " + terminal.TimestampId);
                             terminal.TimestampId = istDateTime;
+                            logger.info("After terminal.TimestampId: " + terminal.TimestampId);
                             if (itemIndex > -1) {
                                 logger.info("Update the existing item: " + JSON.stringify(newItem));
                                 // Update the existing item
