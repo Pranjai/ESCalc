@@ -256,7 +256,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                         blockno: blockNo,
                         value: result,
                     };
-                    //logger.info("inserting into variablevaluesModel: " + JSON.stringify(variableValuedocument));
+                    console.log("inserting into variablevaluesModel: " + JSON.stringify(variableValuedocument));
                     const variableValuesResult = await variablevaluesModel.create(variableValuedocument);
                     try {
                         //logger.info("updating into cdnutsModel: ");
@@ -277,7 +277,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                             terminal.TimestampId = istDateTime;
                             //logger.info("After terminal.TimestampId: " + terminal.TimestampId);
                             if (itemIndex > -1) {
-                                l//ogger.info("Update the existing item: " + JSON.stringify(newItem));
+                                //logger.info("Update the existing item: " + JSON.stringify(newItem));
                                 // Update the existing item
                                 terminal.Data[itemIndex] = newItem;
                             } else {
