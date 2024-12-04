@@ -240,7 +240,8 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                         }
                     }
                     variableValueslist.push({name: "variable_" + variable.variablename, value: result});
-                    let todayDate = istDateTime.toISOString().split("T")[0];
+                    let todayTime = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+                    let todayDate = todayTime.toISOString().split("T")[0];
                     logger.info("todayDate: " + todayDate);
                     const variableValuedocument = {
                         timestamp: istDateTime,
