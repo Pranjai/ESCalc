@@ -115,9 +115,12 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
         tommorow.setHours(0, 0, 0, 0);
         //logger.info("After resetting it to 0 hours tommorow:" + JSON.stringify(tommorow));
         //logger.info("deviceid:" + deviceId);
+        console.log("istDateTime:" + JSON.stringify(istDateTime));
+        console.log("today:" + JSON.stringify(today));
+        console.log("tommorow:" + JSON.stringify(tommorow));
         let blockNo;
         blockNo = ConvertDateTotring.ConvertToBlock(istDateTime);
-        //logger.info("blockNo: " + blockNo);
+        console.log("blockNo: " + blockNo);
         dcsgDataForToday = await dcsgModel.find({ deviceid: deviceId, date: { $gte: today, $lt: tommorow } }).sort({ revisionno: -1 }).limit(1)
         for await (const dcsgdocument of dcsgDataForToday) {
             dcsgDataResponse = dcsgdocument;
@@ -143,7 +146,7 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
             //logger.info("dayAfterTommorow.getTimezoneOffset() - " + dayafterTommorow.getTimezoneOffset())
             dayafterTommorow.setHours(0, 0, 0, 0);
             //logger.info("After resetting it to 0 hours day after tommorow:" + JSON.stringify(dayafterTommorow));
-
+            console.log("dayafterTommorow:" + JSON.stringify(dayafterTommorow));
             const dcsgDataForTomorrow = await dcsgModel.find({ deviceid: deviceId, date: { $gte: tommorow, $lt: dayafterTommorow } }).sort({ revisionno: -1 }).limit(1)
             for await (const dcsgdocument of dcsgDataForTomorrow) {
                 dcsgDataResponse = dcsgdocument;
