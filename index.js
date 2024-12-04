@@ -209,14 +209,15 @@ var changeInstantStream = instantsModel.watch({ fullDocument: "updateLookup" }).
                         };
                         const variableValuesCachesResult = await variablevaluescachesModel.create(variableValuedoc);
                         console.log("response variableValuesCacheResult: " + JSON.stringify(variableValuesCachesResult));
-                        let current_Date = new Date();
+                        let current_Date = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+                        /*let current_Date = new Date();
                         current_Date.setDate(date.getDate());
                         console.log("current_Date.getTimezoneOffset() - " + current_Date.getTimezoneOffset())
                         if (current_Date.getTimezoneOffset() == -330 || current_Date.getTimezoneOffset() == 0) {
                             current_Date.setHours(current_Date.getHours() + 5);
                             current_Date.setMinutes(current_Date.getMinutes() + 30);
                             console.log("After adding 5:30 hours current_Date: " + JSON.stringify(current_Date));
-                        }
+                        }*/
                         current_Date.setHours(0, 0, 0, 0);
                         console.log("current_Date: " + JSON.stringify(current_Date));
                         let mins = 15 * (blockNo - 1);
